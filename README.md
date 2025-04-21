@@ -1,6 +1,21 @@
 
 # Batching JMS Messages to File
 
+## 🧭 Project Navigation Legend
+
+This table provides a quick reference across all repositories in the outbound messaging solution. Use it to understand each component’s role and navigate between them easily.
+
+| Repository            | Description                                  | Status             |
+|-----------------------|----------------------------------------------|--------------------|
+| [outbound-adapter](https://github.com/sipcic/outbound-adapter)           | Main entry point that orchestrates all outbound flow. | 🟢 Start here |
+| [outbound-requirements](https://github.com/sipcic/outbound-requirements) | Functional and technical requirements documentation. | 📄 Requirements         |
+| [outbound-scheduler](https://github.com/sipcic/outbound-scheduler)       | Publishes EOF signals to trigger batch finalization. | ⏰ Scheduler         |
+| [outbound-processor](https://github.com/sipcic/outbound-processor)       | Transforms and writes JMS messages to files.         | 🟢 **You are here**  |
+
+> 🔗 **Tip**: Use this table from any repo to find your way back to the main flow or explore related modules.
+
+---
+
 ## Introduction
 
 ## Introduction
