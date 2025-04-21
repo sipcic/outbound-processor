@@ -1,0 +1,37 @@
+@startuml
+title Sequence Diagram – Batching with Exception Handling and Validation
+
+actor Producer
+participant "JMS Queue" as JMS
+participant "XmlToCsvRoute" as Route
+participant "MessageCounter" as Counter
+participant "XmlToCsvProcessor" as Processor
+participant "working.csv" as File
+participant "ExceptionProcessor" as ErrorLogger
+database "exception/<id>.json" as ExceptionFile
+participant "FileRotator" as Rotator
+
+== Regular Message Flow ==
+Producer -> JMS : Send XML Message
+JMS -> Route : Deliver XML Message
+Route -> Counter : incrementReceived()
+Route -> Processor : Transform XML → CSV
+Processor -> Counter : incrementWritten()
+Processor -> File : Append CSV Row
+
+== Exception Flow ==
+note over Processor : Malformed or invalid XML
+Processor --> ErrorLogger : Handle Exception
+ErrorLogger -> ExceptionFile : Write error as JSON
+ErrorLogger -> Route : Stop Route Execution
+Route --> "[X] : Route Halted"
+
+== EOF Message Flow ==
+Producer -> JMS : Send EOF Message
+JMS -> Route : Deliver EOF Message
+Route -> Rotator : rotateFile()
+Rotator -> File : Close + Rename + Move
+Rotator -> Counter : Validate Counts
+Rotator -> Console : Print PASS / FAIL
+
+@enduml

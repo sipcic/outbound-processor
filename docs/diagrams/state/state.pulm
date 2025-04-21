@@ -1,0 +1,27 @@
+@startuml
+
+title State Diagram - Transactional Flow
+
+[*] --> ConsumeJMSMessage
+ConsumeJMSMessage --> BeginTransaction
+BeginTransaction --> IsEOF
+
+state IsEOF as "Is EOF Message?"
+
+IsEOF --> RotateFile : yes
+RotateFile --> UpdateStatusRotated
+UpdateStatusRotated --> [*]
+
+IsEOF --> SaveReceived : no
+SaveReceived --> TransformXML
+TransformXML --> AppendCSV
+AppendCSV --> UpdateStatusWritten
+UpdateStatusWritten --> [*]
+
+state SaveReceived as "Save to DB\nStatus = RECEIVED"
+state TransformXML as "Transform XML to CSV"
+state AppendCSV as "Append to working.csv"
+state UpdateStatusWritten as "Update DB Status = WRITTEN"
+state UpdateStatusRotated as "Update DB Status = ROTATED"
+
+@enduml

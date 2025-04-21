@@ -1,0 +1,7 @@
+com/example/route/XmlToCsvProcessor.class
+com/example/config/JmsConfig.class
+com/example/Application.class
+com/example/route/ExceptionProcessor.class
+com/example/route/XmlToCsvRoute.class
+com/example/service/MessageCounter.class
+com/example/service/FileRotator.class

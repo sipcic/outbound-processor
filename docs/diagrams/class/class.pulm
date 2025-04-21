@@ -1,0 +1,47 @@
+@startuml
+title Class Diagram – Batching with Exception Handling and Validation
+
+class Application {
+  +main(String[]): void
+}
+
+class JmsConfig {
+  +ConnectionFactory jmsConnectionFactory()
+  +PlatformTransactionManager transactionManager(ConnectionFactory)
+}
+
+class XmlToCsvRoute {
+  +configure(): void
+}
+
+class XmlToCsvProcessor {
+  +process(Exchange): void
+}
+
+class FileRotator {
+  +rotateFile(): void
+}
+
+class ExceptionProcessor {
+  +process(Exchange): void
+}
+
+class MessageCounter {
+  +incrementReceived(): void
+  +incrementWritten(): void
+  +getReceived(): int
+  +getWritten(): int
+  +reset(): void
+}
+
+Application --> XmlToCsvRoute : <<bootstraps>>
+XmlToCsvRoute --> XmlToCsvProcessor : <<uses>>
+XmlToCsvRoute --> FileRotator : <<calls>>
+XmlToCsvRoute --> ExceptionProcessor : <<handles failure>>
+XmlToCsvRoute --> MessageCounter : <<tracks>>
+FileRotator --> MessageCounter : <<validates>>
+
+JmsConfig --> ConnectionFactory : <<provides>>
+JmsConfig --> PlatformTransactionManager : <<provides>>
+
+@enduml

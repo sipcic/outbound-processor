@@ -1,0 +1,24 @@
+@startuml
+title Component Diagram – Message Batching with Exception Handling and Validation
+
+package "Messaging" {
+  [JMS]
+}
+
+package "Processing" {
+  [XmlToCsvRoute]
+  [XmlToCsvProcessor]
+  [FileRotator]
+  [ExceptionProcessor]
+  [MessageCounter]
+}
+
+JMS --> XmlToCsvRoute : <<consume>>
+XmlToCsvRoute --> XmlToCsvProcessor : <<uses>>
+XmlToCsvRoute --> FileRotator : <<calls>>
+XmlToCsvRoute --> ExceptionProcessor : <<handles failure>>
+XmlToCsvRoute --> MessageCounter : <<tracks received>>
+
+FileRotator --> MessageCounter : <<validates counts>>
+
+@enduml

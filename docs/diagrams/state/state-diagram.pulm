@@ -1,0 +1,32 @@
+@startuml
+title State Diagram – Message Batching with Exception Handling and Validation
+
+[*] --> Idle : System startup
+
+state Idle {
+  Idle --> Processing : XML message received
+  Idle --> Rotating : EOF message received
+}
+
+state Processing {
+  Processing --> AppendToFile : Transform and Append
+  AppendToFile --> Idle : Continue
+  AppendToFile --> Exception : Processing failure
+}
+
+state Rotating {
+  Rotating --> CloseFile : Close working.csv
+  CloseFile --> RenameFile : Rename with timestamp
+  RenameFile --> MoveToOutput : Move to output/
+  MoveToOutput --> Validate : Compare received vs written
+  Validate --> Reset : Reset working.csv and counters
+  Reset --> Idle : Ready for next batch
+}
+
+state Exception {
+  Exception --> Halted : Log error and stop
+}
+
+Halted : System Halted (Manual restart required)
+
+@enduml

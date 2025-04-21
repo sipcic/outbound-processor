@@ -1,0 +1,32 @@
+@startuml
+title System Lifecycle – Message Batching with Validation and Exception Handling
+
+[*] --> Listening : System Startup
+
+state "Listening for Messages" as Listening {
+  Listening --> Processing : XML Message Received
+  Listening --> Rotating : EOF Message Received
+}
+
+state Processing {
+  Processing --> AppendToWorking : Transform + Append CSV
+  AppendToWorking --> Listening : Increment counters
+  AppendToWorking --> LogException : On Processing Failure
+}
+
+state Rotating {
+  Rotating --> CloseFile : Close working.csv
+  CloseFile --> RenameFile : Rename with Timestamp
+  RenameFile --> MoveToOutput : Move to output/
+  MoveToOutput --> ValidateCounts : Compare Received vs Written
+  ValidateCounts --> ResetWorking : Reset working.csv
+  ResetWorking --> Listening : Ready for Next Batch
+}
+
+state LogException {
+  LogException --> Halted : Write JSON + Stop
+}
+
+Halted : System Halted (Manual Restart Required)
+
+@enduml
